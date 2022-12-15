@@ -8,6 +8,7 @@ use App\Form\ProductsFilesType;
 use App\Repository\ProductsRepository;
 use App\Services\SerializerService;
 use App\Services\WeightService;
+use App\Tests\ProductsListTest;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,10 @@ class IndexController extends AbstractController
     {
         return $this->render('index/products.html.twig', [
             'title' => 'Products',
-            'products' => $productsRepository->getProductsPaginator($request, $paginator)
+            'products' => $productsRepository->getProductsPaginator($request, $paginator),
+            'categories' => $productsRepository->getCategories(),
+            'route_name' => 'products',
+            'category' => $request->query->get('category')
         ]);
     }
     
@@ -127,6 +131,7 @@ class IndexController extends AbstractController
     public function coverage(): Response
     {
         return $this->render('index/coverage.html.twig', [
+            'title' => 'Coverage',
             'controller_name' => 'coverage',
         ]);
     }

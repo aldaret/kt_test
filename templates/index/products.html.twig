@@ -6,6 +6,29 @@
 <div class="album py-5 bg-light">
     <h2 class="text-center pb-3">{{ title }}</h2>
     <div class="container">
+        
+        <div class="pb-3">
+            <span class="next p-1">
+                <a type="button" class="btn btn-secondary" rel="next" href="{{ path(route_name, {category, 'weight': 'light'}) }}">Сначала легкие</a>
+            </span>
+            <span class="next p-1">
+                <a type="button" class="btn btn-secondary" rel="next" href="{{ path(route_name, {category, 'weight': 'hight'}) }}">Сначала тяжелые</a>
+            </span>
+
+            <form action="" method="get">
+                <div class="pt-3 pb-3">
+                    <select class="form-select" id="country" required="" name="category">
+                        <option value="">Выберите категорию</option>
+                        {% for category in categories %}
+                            <option value="{{ category.name }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <span class="pt-6">
+                    <button type="submit" class="btn btn-secondary">Выбрать</button>
+                </span>
+            </form>
+        </div>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 

@@ -46,13 +46,38 @@ class ProductsRepository extends ServiceEntityRepository
 
     public function getProductsPaginator(Request $request, PaginatorInterface $paginator)
     {
-        $query = $this->createQueryBuilder('c')->getQuery();
+        $query = $this->createQueryBuilder('c');
+
+        if ($request->query->get('weight') == 'light') {
+            $query = $query
+                ->orderBy('c.weight', 'ASC');
+        }elseif ($request->query->get('weight') == 'hight') {
+            $query = $query
+                ->orderBy('c.weight', 'DESC');
+        }
+
+        if (null !== $request->query->get('category')) {
+            $query = $query
+                ->where('c.category = :value')
+                ->setParameter('value', $request->query->get('category'));
+        }
+
+        $query = $query->getQuery();
 
         return $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             self::PRODUCTS_PER_PAGE
         );
+    }
+
+    public function getCategories(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.category AS name')
+            ->groupBy('c.category')
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**
