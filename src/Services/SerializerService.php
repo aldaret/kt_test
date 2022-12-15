@@ -17,13 +17,4 @@ class SerializerService
 
         return $serializer->decode($content, 'xml');
     }
-
-    public function setCsv($content)
-    {
-        $encoder      = [new CsvEncoder()];
-        $normalizer   = [new ObjectNormalizer()];
-        $serializer   = new Serializer($normalizer, $encoder);
-
-        return $serializer->encode($content, 'scv');
-    }
 }
