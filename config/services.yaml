@@ -6,6 +6,7 @@
 parameters:
     xml_files: '%kernel.project_dir%/public/upload/'
     upload_files: 'upload/'
+    test_result: '../tests/coverage/'
 
 services:
     # default configuration for services in *this* file

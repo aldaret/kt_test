@@ -8,7 +8,6 @@ use App\Form\ProductsFilesType;
 use App\Repository\ProductsRepository;
 use App\Services\SerializerService;
 use App\Services\WeightService;
-use App\Tests\ProductsListTest;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -128,11 +127,20 @@ class IndexController extends AbstractController
     }
     
     #[Route('/coverage', name: 'coverage')]
-    public function coverage(): Response
+    public function coverage(Request $request, ProductsRepository $productsRepository, PaginatorInterface $paginator): Response
     {
+        shell_exec('cd ../;php8.0 ./vendor/bin/phpunit --coverage-html -i > tests/coverage/test.html');
+        $testResult = file_get_contents($this->getParameter('test_result') . 'test.html');
+
+        $testResult = str_replace('PHPUnit 9.5.27 by Sebastian Bergmann and contributors.
+
+Warning:       No code coverage driver available
+', '', $testResult);
+
         return $this->render('index/coverage.html.twig', [
             'title' => 'Coverage',
             'controller_name' => 'coverage',
+            'test_result' => $testResult
         ]);
     }
 }
