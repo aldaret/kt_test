@@ -30,9 +30,18 @@ class IndexController extends AbstractController
     #[Route('/products', name: 'products')]
     public function products(Request $request, ProductsRepository $productsRepository, PaginatorInterface $paginator): Response
     {
+        $params['category'] = $request->query->get('category') ?? null;
+        $params['weight'] = $request->query->get('weight') ?? null;
+
+        $paginator = $paginator->paginate(
+            $productsRepository->getProductsPaginator($params),
+            $request->query->getInt('page', 1),
+            6
+        );
+
         return $this->render('index/products.html.twig', [
             'title' => 'Products',
-            'products' => $productsRepository->getProductsPaginator($request, $paginator),
+            'products' => $paginator,
             'categories' => $productsRepository->getCategories(),
             'route_name' => 'products',
             'category' => $request->query->get('category')
@@ -127,20 +136,19 @@ class IndexController extends AbstractController
     }
     
     #[Route('/coverage', name: 'coverage')]
-    public function coverage(Request $request, ProductsRepository $productsRepository, PaginatorInterface $paginator): Response
+    public function coverage(): Response
     {
-        shell_exec('cd ../;php8.0 ./vendor/bin/phpunit --coverage-html -i > tests/coverage/test.html');
-        $testResult = file_get_contents($this->getParameter('test_result') . 'test.html');
-
-        $testResult = str_replace('PHPUnit 9.5.27 by Sebastian Bergmann and contributors.
-
-Warning:       No code coverage driver available
-', '', $testResult);
-
         return $this->render('index/coverage.html.twig', [
             'title' => 'Coverage',
-            'controller_name' => 'coverage',
-            'test_result' => $testResult
+        ]);
+    }
+
+    #[Route('/tests', name: 'tests')]
+    public function tests(): Response
+    {
+        shell_exec('cd ../;rm -rf public/coverage;php8.0 ./vendor/bin/phpunit --coverage-html public/coverage');
+        return $this->render('index/tests.html.twig', [
+            'title' => 'Tests',
         ]);
     }
 }

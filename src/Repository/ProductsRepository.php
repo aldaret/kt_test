@@ -4,10 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Products;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\Request;
-use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @extends ServiceEntityRepository<Products>
@@ -19,8 +16,6 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class ProductsRepository extends ServiceEntityRepository
 {
-    public const PRODUCTS_PER_PAGE = 6;
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Products::class);
@@ -44,31 +39,25 @@ class ProductsRepository extends ServiceEntityRepository
         }
     }
 
-    public function getProductsPaginator(Request $request, PaginatorInterface $paginator)
+    public function getProductsPaginator(array $params = null)
     {
         $query = $this->createQueryBuilder('c');
 
-        if ($request->query->get('weight') == 'light') {
+        if ($params['weight'] == 'light') {
             $query = $query
                 ->orderBy('c.weight', 'ASC');
-        }elseif ($request->query->get('weight') == 'hight') {
+        }elseif ($params['weight'] == 'hight') {
             $query = $query
                 ->orderBy('c.weight', 'DESC');
         }
 
-        if (null !== $request->query->get('category')) {
+        if (null !== $params['category']) {
             $query = $query
                 ->where('c.category = :value')
-                ->setParameter('value', $request->query->get('category'));
+                ->setParameter('value', $params['category']);
         }
 
-        $query = $query->getQuery();
-
-        return $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            self::PRODUCTS_PER_PAGE
-        );
+        return $query->getQuery();
     }
 
     public function getCategories(): array
@@ -79,29 +68,4 @@ class ProductsRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-//    /**
-//     * @return Products[] Returns an array of Products objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Products
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

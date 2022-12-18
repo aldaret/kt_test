@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Import{% endblock %}
+{% block title %}Tests{% endblock %}
 
 {% block body %}
 <style>
@@ -10,9 +10,5 @@
 
 <div class="example-wrapper">
     <h2 class="text-center pb-3">{{ title }}</h2>
-    {{ form(form) }}
-    {% if report != '' %}
-        <a id="report" href="{{ report }}">Отчет</a>
-    {% endif %}
 </div>
 {% endblock %}
